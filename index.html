@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Text Tools - Autocorrect & Summarizer</title>
+
+    <style>
+      body.dark {
+        --bg-main: #222d3a;
+        --bg-surface: #25304b;
+        --bg-panel: #1a2233;
+
+        --text-main: #e6e9ef;
+        --text-muted: #9aa4b2;
+
+        --primary: #f56217;
+        --border-soft: rgba(255, 255, 255, 0.08);
+      }
+      body.dark .panel {
+        background: var(--bg-panel);
+        border-radius: 16px;
+      }
+      body.dark .mode-btn {
+        background: transparent;
+        color: var(--text-muted);
+        border: 1px solid var(--border-soft);
+      }
+
+      body.dark .mode-btn.active {
+        background: #f56217;
+        color: #fff;
+        border: none;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body.dark {
+        background: linear-gradient(180deg, #58708d, #3d4e6e);
+        color: var(--text-main);
+      }
+      body.dark .action-btn {
+        background: linear-gradient(to right, #f56217, #c44b14);
+        color: #fff;
+        font-weight: 600;
+      }
+
+      body.dark .container {
+        background: var(--bg-surface);
+        box-shadow: 0 40px 80px rgba(34, 34, 34, 0.7);
+      }
+
+      body {
+        font-family:
+          "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* fallback */
+        background: #3a6186; /* animated gradient */
+        background: linear-gradient(270deg, #89253e, #3a6186, #89253e);
+        background-size: 400% 400%;
+        animation: gradientMove 12s ease infinite;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      @keyframes gradientMove {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      h1 {
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(270deg, #ff6a00, #ffcc00, #667eea, #764ba2);
+        background-size: 800% 800%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradientText 6s ease infinite;
+      }
+
+      @keyframes gradientText {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(13, 13, 13, 0.3);
+        max-width: 900px;
+        width: 100%;
+        padding: 40px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #667eea;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+      }
+
+      .mode-selector {
+        display: flex;
+        align-items: center;
+
+        gap: 15px;
+        margin-bottom: 30px;
+        justify-content: center;
+      }
+      .container {
+        backdrop-filter: blur(12px);
+        background: rgba(255, 255, 255, 0.85);
+        animation: floatBox 6s ease-in-out infinite;
+      }
+      button:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      @keyframes floatBox {
+        0% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+        100% {
+          transform: translateY(0);
+        }
+      }
+
+      .mode-btn {
+        flex: 1;
+        max-width: 200px;
+        padding: 15px;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.1em;
+        cursor: pointer;
+        background: #e0e0e0;
+      }
+
+      .subtitle {
+        font-size: 0.95rem;
+        max-width: 500px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+      }
+
+      .mode-btn.active {
+        background: #0b486b; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #f56217,
+          #0b486b
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(
+          to right,
+          #f56217,
+          #0b486b
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        color: white;
+      }
+
+      textarea {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: 2px solid #1e1d1d;
+        font-size: 1em;
+        margin-bottom: 15px;
+      }
+
+      #outputText {
+        background: #f0f4ff;
+      }
+      .panel {
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow:
+          0 8px 20px rgba(0, 0, 0, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      }
+      .divider {
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(0, 0, 0, 0.1),
+          transparent
+        );
+        margin: 24px 0;
+      }
+
+      .action-btn {
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+        font-size: 1.2em;
+        cursor: pointer;
+        background: #0b486b; /* fallback for old browsers */
+        background: -webkit-linear-gradient(
+          to right,
+          #f56217,
+          #0b486b
+        ); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(
+          to right,
+          #f56217,
+          #0b486b
+        ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+        color: white;
+        margin: 20px 0;
+      }
+      .theme-toggle {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 16px;
+      }
+
+      #themeBtn {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        color: inherit;
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        cursor: pointer;
+      }
+
+      .processing {
+        opacity: 0.6;
+      }
+      body.dark {
+        background: #0e1117 !important;
+        color: white;
+      }
+
+      #textbox {
+        display: flex;
+        align-items: stretch;
+        gap: 20px;
+        height: 280px;
+        resize: none;
+      }
+      #textbox textarea {
+        width: 100%;
+        height: 260px; /* ✅ correct visible size */
+        resize: vertical; /* allow user resize if needed */
+        line-height: 1.5;
+        font-size: 1em;
+      }
+      .processing {
+        animation: pulse 1.2s infinite;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="theme-toggle">
+        <button id="themeBtn" onclick="toggleTheme()">🌙 Dark</button>
+      </div>
+
+      <h1>✨TextIQ✨</h1>
+      <p class="subtitle">Autocorrect & Summarize your text</p>
+      <div class="panel">
+        <div class="mode-selector">
+          <button
+            class="mode-btn active"
+            id="autocorrectBtn"
+            onclick="setMode('autocorrect')"
+          >
+            📝 Autocorrect
+          </button>
+          <button
+            class="mode-btn"
+            id="summarizerBtn"
+            onclick="setMode('summarise')"
+          >
+            📄 Summarizer
+          </button>
+        </div>
+        <div id="textbox">
+          <textarea id="inputText" placeholder="Enter text..."></textarea>
+
+          <textarea
+            id="outputText"
+            readonly
+            placeholder="Output will appear here..."
+          ></textarea>
+        </div>
+      </div>
+
+      <button class="action-btn" id="processBtn" onclick="processText()">
+        Process Text
+      </button>
+    </div>
+
+    <script>
+      let currentMode = "autocorrect";
+
+      const inputText = document.getElementById("inputText");
+      const outputText = document.getElementById("outputText");
+      const processBtn = document.getElementById("processBtn");
+
+      function setMode(mode) {
+        currentMode = mode;
+
+        document
+          .getElementById("autocorrectBtn")
+          .classList.toggle("active", mode === "autocorrect");
+        document
+          .getElementById("summarizerBtn")
+          .classList.toggle("active", mode === "summarise");
+
+        outputText.value = "";
+      }
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+
+        const btn = document.getElementById("themeBtn");
+
+        if (document.body.classList.contains("dark")) {
+          btn.textContent = "☀ Light";
+        } else {
+          btn.textContent = "🌙 Dark";
+        }
+      }
+
+      function processText() {
+        const text = inputText.value.trim();
+        if (!text) {
+          alert("Please enter text");
+          return;
+        }
+
+        processBtn.disabled = true;
+        processBtn.textContent = "Processing...";
+        processBtn.classList.add("processing");
+
+        fetch("http://127.0.0.1:8000/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            request: text,
+            task: currentMode,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            outputText.value = data.response;
+          })
+          .catch((err) => {
+            console.error(err);
+            alert("Backend error");
+          })
+          .finally(() => {
+            processBtn.disabled = false;
+            processBtn.textContent = "Process Text";
+            processBtn.classList.remove("processing");
+          });
+      }
+    </script>
+  </body>
+</html>
